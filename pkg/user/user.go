@@ -59,7 +59,7 @@ func FetchUser(email, tablename string, dynaClient dynamodbiface.DynamoDBAPI) (*
 
 func FetchUsers(tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*[]User, error) {
 
-	input := dynamodb.ScanInput{
+	input := &dynamodb.ScanInput{
 		TableName: aws.String(tableName),
 	}
 
@@ -71,6 +71,9 @@ func FetchUsers(tableName string, dynaClient dynamodbiface.DynamoDBAPI) (*[]User
 
 	item := new([]User)
 	err = dynamodbattribute.UnmarshalListOfMaps(result.Items, item)
+	if err != nil {
+		return nil, errors.New(ErrorFailedToUnmarshalRecord)
+	}
 	return item, nil
 }
 
